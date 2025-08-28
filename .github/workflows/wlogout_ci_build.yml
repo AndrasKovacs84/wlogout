@@ -41,11 +41,20 @@ jobs:
           path: |
             build/wlogout
             assets/
+            
+      - name: Create release zip
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p release_package
+          cp build/wlogout release_package/
+          cp -r assets release_package/
+          cd release_package
+          zip -r ../wlogout.zip .
 
       - name: Upload to GitHub Releases
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          files: build/wlogout
+          files: wlogout.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
